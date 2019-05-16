@@ -4,10 +4,10 @@
   "description": "Vim extension for VSCode",
   "version": "0.0.5",
   "license": "MIT",
-  "publisher": "jpotterm",
+  "publisher": "garlandcrow",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jpotterm/vscode-simple-vim.git"
+    "url": "https://github.com/garlandcrow/vscode-simple-vim.git"
   },
   "engines": {
     "vscode": "^1.22.2"
@@ -29,31 +29,6 @@
       {
         "key": "shift+q shift+q",
         "command": "editor.action.copyLinesUpAction",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "g d",
-        "command": "extension.dash.specific",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "g g",
-        "command": "workbench.action.terminal.scrollToTop",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "g h",
-        "command": "editor.action.showHover",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "g shift+u",
-        "command": "editor.action.transformToUppercase",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "g shift+l",
-        "command": "editor.action.transformToLowercase",
         "when": "editorTextFocus && !extension.simpleVim.insertMode"
       },
       {
@@ -121,5 +96,10 @@
     "tslint": "^5.10.0",
     "typescript": "^2.9.2",
     "vscode": "^1.1.18"
+  },
+  "__metadata": {
+    "id": "558c9fe6-962a-44dd-bf31-0bf7f9e22439",
+    "publisherDisplayName": "garlandcrow",
+    "publisherId": "2d0b8496-ffbd-4e3e-a1d4-88affa0dedaf"
   }
 }

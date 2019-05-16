@@ -20,6 +20,24 @@ import KeyMap from "./keymap";
 import keymap from "./keymap";
 
 export const actions: Action[] = [
+  // new actions
+  parseKeysExact(["g", "d"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("extension.dash.specific");
+  }),
+
+  parseKeysExact(["g", "h"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.showHover");
+  }),
+
+  parseKeysExact(["g", "U"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.transformToUppercase");
+  }),
+
+  parseKeysExact(["g", "L"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.transformToLowercase");
+  }),
+
+  // existing
   parseKeysExact(
     [KeyMap.Actions.InsertMode],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
