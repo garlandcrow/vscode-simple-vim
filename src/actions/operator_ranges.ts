@@ -24,73 +24,73 @@ import { quoteRanges, findQuoteRange } from "../quote_utils";
 import { indentLevelRange } from "../indent_utils";
 import { getTags } from "../tag_utils";
 import { arrayFindLast } from "../array_utils";
-import KeyMap from "./keymap";
+// import KeyMap from "./keymap";
 
 export const operatorRanges: OperatorRange[] = [
-  createOperatorRangeExactKeys(
-    [KeyMap.Motions.MoveRight],
-    false,
-    (vimState, document, position) => {
-      const right = positionUtils.right(document, position);
+  // createOperatorRangeExactKeys(
+  //   [KeyMap.Motions.MoveRight],
+  //   false,
+  //   (vimState, document, position) => {
+  //     const right = positionUtils.right(document, position);
 
-      if (right.isEqual(position)) {
-        return undefined;
-      } else {
-        return new vscode.Range(position, right);
-      }
-    }
-  ),
-  createOperatorRangeExactKeys(
-    [KeyMap.Motions.MoveLeft],
-    false,
-    (vimState, document, position) => {
-      const left = positionUtils.left(position);
+  //     if (right.isEqual(position)) {
+  //       return undefined;
+  //     } else {
+  //       return new vscode.Range(position, right);
+  //     }
+  //   }
+  // ),
+  // createOperatorRangeExactKeys(
+  //   [KeyMap.Motions.MoveLeft],
+  //   false,
+  //   (vimState, document, position) => {
+  //     const left = positionUtils.left(position);
 
-      if (left.isEqual(position)) {
-        return undefined;
-      } else {
-        return new vscode.Range(position, left);
-      }
-    }
-  ),
-  createOperatorRangeExactKeys(
-    [KeyMap.Motions.MoveUp],
-    true,
-    (vimState, document, position) => {
-      if (position.line === 0) {
-        return new vscode.Range(
-          new vscode.Position(0, 0),
-          positionUtils.lineEnd(document, position)
-        );
-      } else {
-        return new vscode.Range(
-          new vscode.Position(position.line - 1, 0),
-          positionUtils.lineEnd(document, position)
-        );
-      }
-    }
-  ),
+  //     if (left.isEqual(position)) {
+  //       return undefined;
+  //     } else {
+  //       return new vscode.Range(position, left);
+  //     }
+  //   }
+  // ),
+  // createOperatorRangeExactKeys(
+  //   [KeyMap.Motions.MoveUp],
+  //   true,
+  //   (vimState, document, position) => {
+  //     if (position.line === 0) {
+  //       return new vscode.Range(
+  //         new vscode.Position(0, 0),
+  //         positionUtils.lineEnd(document, position)
+  //       );
+  //     } else {
+  //       return new vscode.Range(
+  //         new vscode.Position(position.line - 1, 0),
+  //         positionUtils.lineEnd(document, position)
+  //       );
+  //     }
+  //   }
+  // ),
 
-  createOperatorRangeExactKeys(
-    [KeyMap.Motions.MoveDown],
-    true,
-    (vimState, document, position) => {
-      if (position.line === document.lineCount - 1) {
-        return new vscode.Range(
-          new vscode.Position(position.line, 0),
-          positionUtils.lineEnd(document, position)
-        );
-      } else {
-        return new vscode.Range(
-          new vscode.Position(position.line, 0),
-          positionUtils.lineEnd(
-            document,
-            position.with({ line: position.line + 1 })
-          )
-        );
-      }
-    }
-  ),
+  // createOperatorRangeExactKeys(
+  //   [KeyMap.Motions.MoveDown],
+  //   true,
+  //   (vimState, document, position) => {
+  //     if (position.line === document.lineCount - 1) {
+  //       return new vscode.Range(
+  //         new vscode.Position(position.line, 0),
+  //         positionUtils.lineEnd(document, position)
+  //       );
+  //     } else {
+  //       return new vscode.Range(
+  //         new vscode.Position(position.line, 0),
+  //         positionUtils.lineEnd(
+  //           document,
+  //           position.with({ line: position.line + 1 })
+  //         )
+  //       );
+  //     }
+  //   }
+  // ),
 
   createOperatorRangeExactKeys(
     ["w"],

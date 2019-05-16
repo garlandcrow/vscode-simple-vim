@@ -58,6 +58,7 @@ export const actions: Action[] = [
     [KeyMap.Actions.InsertMode],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
     (vimState, editor) => {
+      console.log("fuck insertMode: " + KeyMap.Actions.InsertMode);
       enterInsertMode(vimState);
       setModeCursorStyle(vimState.mode, editor);
       removeTypeSubscription(vimState);

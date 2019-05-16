@@ -96,10 +96,5 @@
     "tslint": "^5.10.0",
     "typescript": "^2.9.2",
     "vscode": "^1.1.18"
-  },
-  "__metadata": {
-    "id": "558c9fe6-962a-44dd-bf31-0bf7f9e22439",
-    "publisherDisplayName": "garlandcrow",
-    "publisherId": "2d0b8496-ffbd-4e3e-a1d4-88affa0dedaf"
   }
 }
