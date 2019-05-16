@@ -78,3 +78,10 @@ export function lineEnd(
     character: lineLength
   });
 }
+
+export function lastChar(document: vscode.TextDocument): vscode.Position {
+  return new vscode.Position(
+    document.lineCount - 1,
+    document.lineAt(document.lineCount - 1).text.length
+  );
+}
