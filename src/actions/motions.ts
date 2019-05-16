@@ -16,27 +16,36 @@ import { searchForward, searchBackward } from "../search_utils";
 import { paragraphForward, paragraphBackward } from "../paragraph_utils";
 import { setVisualLineSelections } from "../visual_line_utils";
 import { setVisualSelections } from "../visual_utils";
+import KeyMap from "./keymap";
 
 export const motions: Action[] = [
-  parseKeysExact(["l"], [Mode.Normal, Mode.Visual], (vimState, editor) => {
-    execMotion(vimState, editor, ({ document, position }) => {
-      return positionUtils.rightNormal(document, position);
-    });
-  }),
+  parseKeysExact(
+    [KeyMap.Motions.MoveRight],
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor) => {
+      execMotion(vimState, editor, ({ document, position }) => {
+        return positionUtils.rightNormal(document, position);
+      });
+    }
+  ),
 
-  parseKeysExact(["h"], [Mode.Normal, Mode.Visual], (vimState, editor) => {
-    execMotion(vimState, editor, ({ document, position }) => {
-      return positionUtils.left(position);
-    });
-  }),
+  parseKeysExact(
+    [KeyMap.Motions.MoveLeft],
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor) => {
+      execMotion(vimState, editor, ({ document, position }) => {
+        return positionUtils.left(position);
+      });
+    }
+  ),
 
-  parseKeysExact(["k"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact([KeyMap.Motions.MoveUp], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("cursorMove", {
       to: "up",
       by: "wrappedLine"
     });
   }),
-  parseKeysExact(["k"], [Mode.Visual], (vimState, editor) => {
+  parseKeysExact([KeyMap.Motions.MoveUp], [Mode.Visual], (vimState, editor) => {
     const originalSelections = editor.selections;
 
     vscode.commands
@@ -49,40 +58,56 @@ export const motions: Action[] = [
         setVisualSelections(editor, originalSelections);
       });
   }),
-  parseKeysExact(["k"], [Mode.VisualLine], (vimState, editor) => {
-    vscode.commands
-      .executeCommand("cursorMove", { to: "up", by: "line", select: true })
-      .then(() => {
-        setVisualLineSelections(editor);
-      });
-  }),
+  parseKeysExact(
+    [KeyMap.Motions.MoveUp],
+    [Mode.VisualLine],
+    (vimState, editor) => {
+      vscode.commands
+        .executeCommand("cursorMove", { to: "up", by: "line", select: true })
+        .then(() => {
+          setVisualLineSelections(editor);
+        });
+    }
+  ),
 
-  parseKeysExact(["j"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("cursorMove", {
-      to: "down",
-      by: "wrappedLine"
-    });
-  }),
-  parseKeysExact(["j"], [Mode.Visual], (vimState, editor) => {
-    const originalSelections = editor.selections;
-
-    vscode.commands
-      .executeCommand("cursorMove", {
+  parseKeysExact(
+    [KeyMap.Motions.MoveDown],
+    [Mode.Normal],
+    (vimState, editor) => {
+      vscode.commands.executeCommand("cursorMove", {
         to: "down",
-        by: "wrappedLine",
-        select: true
-      })
-      .then(() => {
-        setVisualSelections(editor, originalSelections);
+        by: "wrappedLine"
       });
-  }),
-  parseKeysExact(["j"], [Mode.VisualLine], (vimState, editor) => {
-    vscode.commands
-      .executeCommand("cursorMove", { to: "down", by: "line", select: true })
-      .then(() => {
-        setVisualLineSelections(editor);
-      });
-  }),
+    }
+  ),
+  parseKeysExact(
+    [KeyMap.Motions.MoveDown],
+    [Mode.Visual],
+    (vimState, editor) => {
+      const originalSelections = editor.selections;
+
+      vscode.commands
+        .executeCommand("cursorMove", {
+          to: "down",
+          by: "wrappedLine",
+          select: true
+        })
+        .then(() => {
+          setVisualSelections(editor, originalSelections);
+        });
+    }
+  ),
+  parseKeysExact(
+    [KeyMap.Motions.MoveDown],
+    [Mode.VisualLine],
+    (vimState, editor) => {
+      vscode.commands
+        .executeCommand("cursorMove", { to: "down", by: "line", select: true })
+        .then(() => {
+          setVisualLineSelections(editor);
+        });
+    }
+  ),
 
   parseKeysExact(
     ["w"],
@@ -232,7 +257,7 @@ export const motions: Action[] = [
   ),
 
   parseKeysExact(
-    ["$"],
+    [KeyMap.Motions.MoveLineEnd],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
     (vimState, editor) => {
       execMotion(vimState, editor, ({ document, position }) => {
@@ -243,7 +268,7 @@ export const motions: Action[] = [
   ),
 
   parseKeysExact(
-    ["_"],
+    [KeyMap.Motions.MoveLineStart],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
     (vimState, editor) => {
       execMotion(vimState, editor, ({ document, position }) => {

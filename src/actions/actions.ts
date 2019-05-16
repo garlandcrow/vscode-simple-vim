@@ -16,10 +16,12 @@ import { setVisualLineSelections } from "../visual_line_utils";
 import { flashYankHighlight } from "../yank_highlight";
 import { putAfter } from "../put_utils/put_after";
 import { putBefore } from "../put_utils/put_before";
+import KeyMap from "./keymap";
+import keymap from "./keymap";
 
 export const actions: Action[] = [
   parseKeysExact(
-    ["i"],
+    [KeyMap.Actions.InsertMode],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
     (vimState, editor) => {
       enterInsertMode(vimState);
@@ -28,18 +30,22 @@ export const actions: Action[] = [
     }
   ),
 
-  parseKeysExact(["I"], [Mode.Normal], (vimState, editor) => {
-    editor.selections = editor.selections.map(selection => {
-      const character = editor.document.lineAt(selection.active.line)
-        .firstNonWhitespaceCharacterIndex;
-      const newPosition = selection.active.with({ character: character });
-      return new vscode.Selection(newPosition, newPosition);
-    });
+  parseKeysExact(
+    [KeyMap.Actions.InsertAtLineStart],
+    [Mode.Normal],
+    (vimState, editor) => {
+      editor.selections = editor.selections.map(selection => {
+        const character = editor.document.lineAt(selection.active.line)
+          .firstNonWhitespaceCharacterIndex;
+        const newPosition = selection.active.with({ character: character });
+        return new vscode.Selection(newPosition, newPosition);
+      });
 
-    enterInsertMode(vimState);
-    setModeCursorStyle(vimState.mode, editor);
-    removeTypeSubscription(vimState);
-  }),
+      enterInsertMode(vimState);
+      setModeCursorStyle(vimState.mode, editor);
+      removeTypeSubscription(vimState);
+    }
+  ),
 
   parseKeysExact(["a"], [Mode.Normal], (vimState, editor) => {
     editor.selections = editor.selections.map(selection => {
@@ -55,18 +61,22 @@ export const actions: Action[] = [
     removeTypeSubscription(vimState);
   }),
 
-  parseKeysExact(["A"], [Mode.Normal], (vimState, editor) => {
-    editor.selections = editor.selections.map(selection => {
-      const lineLength = editor.document.lineAt(selection.active.line).text
-        .length;
-      const newPosition = selection.active.with({ character: lineLength });
-      return new vscode.Selection(newPosition, newPosition);
-    });
+  parseKeysExact(
+    [KeyMap.Actions.InsertAtLineEnd],
+    [Mode.Normal],
+    (vimState, editor) => {
+      editor.selections = editor.selections.map(selection => {
+        const lineLength = editor.document.lineAt(selection.active.line).text
+          .length;
+        const newPosition = selection.active.with({ character: lineLength });
+        return new vscode.Selection(newPosition, newPosition);
+      });
 
-    enterInsertMode(vimState);
-    setModeCursorStyle(vimState.mode, editor);
-    removeTypeSubscription(vimState);
-  }),
+      enterInsertMode(vimState);
+      setModeCursorStyle(vimState.mode, editor);
+      removeTypeSubscription(vimState);
+    }
+  ),
 
   parseKeysExact(["v"], [Mode.Normal, Mode.VisualLine], (vimState, editor) => {
     if (vimState.mode === Mode.Normal) {
@@ -93,19 +103,27 @@ export const actions: Action[] = [
     setVisualLineSelections(editor);
   }),
 
-  parseKeysExact(["o"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("editor.action.insertLineAfter");
-    enterInsertMode(vimState);
-    setModeCursorStyle(vimState.mode, editor);
-    removeTypeSubscription(vimState);
-  }),
+  parseKeysExact(
+    [KeyMap.Actions.NewLineBelow],
+    [Mode.Normal],
+    (vimState, editor) => {
+      vscode.commands.executeCommand("editor.action.insertLineAfter");
+      enterInsertMode(vimState);
+      setModeCursorStyle(vimState.mode, editor);
+      removeTypeSubscription(vimState);
+    }
+  ),
 
-  parseKeysExact(["O"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("editor.action.insertLineBefore");
-    enterInsertMode(vimState);
-    setModeCursorStyle(vimState.mode, editor);
-    removeTypeSubscription(vimState);
-  }),
+  parseKeysExact(
+    [keymap.Actions.NewLineAbove],
+    [Mode.Normal],
+    (vimState, editor) => {
+      vscode.commands.executeCommand("editor.action.insertLineBefore");
+      enterInsertMode(vimState);
+      setModeCursorStyle(vimState.mode, editor);
+      removeTypeSubscription(vimState);
+    }
+  ),
 
   parseKeysExact(["p"], [Mode.Normal, Mode.Visual, Mode.VisualLine], putAfter),
   parseKeysExact(["P"], [Mode.Normal], putBefore),
@@ -130,13 +148,13 @@ export const actions: Action[] = [
     }
   }),
 
-  parseKeysExact(
-    ["u"],
-    [Mode.Normal, Mode.Visual, Mode.VisualLine],
-    (vimState, editor) => {
-      vscode.commands.executeCommand("undo");
-    }
-  ),
+  //   parseKeysExact(
+  //     ["u"],
+  //     [Mode.Normal, Mode.Visual, Mode.VisualLine],
+  //     (vimState, editor) => {
+  //       vscode.commands.executeCommand("undo");
+  //     }
+  //   ),
 
   parseKeysExact(["d", "d"], [Mode.Normal], (vimState, editor) => {
     deleteLine(vimState, editor);
@@ -145,6 +163,44 @@ export const actions: Action[] = [
   parseKeysExact(["D"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("deleteAllRight");
   }),
+
+  // parseKeysExact(
+  //   ["d", "2", KeyMap.Motions.MoveDown],
+  //   [Mode.Normal],
+  //   (vimState, editor) => {
+  //     deleteLines(vimState, editor, 2);
+  //   }
+  // ),
+  // parseKeysExact(
+  //   ["d", "3", KeyMap.Motions.MoveDown],
+  //   [Mode.Normal],
+  //   (vimState, editor) => {
+  //     deleteLines(vimState, editor, 3);
+  //   }
+  // ),
+  // parseKeysExact(
+  //   ["d", "4", KeyMap.Motions.MoveDown],
+  //   [Mode.Normal],
+  //   (vimState, editor) => {
+  //     deleteLines(vimState, editor, 4);
+  //   }
+  // ),
+
+  // parseKeysExact(
+  //   ["d", "5", KeyMap.Motions.MoveDown],
+  //   [Mode.Normal],
+  //   (vimState, editor) => {
+  //     deleteLines(vimState, editor, 5);
+  //   }
+  // ),
+
+  // parseKeysExact(
+  //   ["d", "2", KeyMap.Motions.MoveUp],
+  //   [Mode.Normal],
+  //   (vimState, editor) => {
+  //     deleteLines(vimState, editor, 2, Direction.Up);
+  //   }
+  // ),
 
   parseKeysExact(["c", "c"], [Mode.Normal], (vimState, editor) => {
     editor.edit(editBuilder => {
@@ -271,8 +327,31 @@ export const actions: Action[] = [
   })
 ];
 
-function deleteLine(vimState: VimState, editor: vscode.TextEditor): void {
-  vscode.commands.executeCommand("editor.action.deleteLines").then(() => {
+enum Direction {
+  Up,
+  Down
+}
+
+function deleteLines(
+  vimState: VimState,
+  editor: vscode.TextEditor,
+  count: Number,
+  direction: Direction = Direction.Down
+): void {
+  let commands: any[] = [];
+  [...Array(count).keys()].forEach(() => {
+    if (direction == Direction.Up) {
+      commands.push(
+        vscode.commands.executeCommand("cursorMove", {
+          to: "up",
+          by: "wrappedLine"
+        })
+      );
+    }
+    commands.push(vscode.commands.executeCommand("editor.action.deleteLines"));
+  });
+
+  Promise.all(commands).then(() => {
     editor.selections = editor.selections.map(selection => {
       const character = editor.document.lineAt(selection.active.line)
         .firstNonWhitespaceCharacterIndex;
@@ -280,6 +359,14 @@ function deleteLine(vimState: VimState, editor: vscode.TextEditor): void {
       return new vscode.Selection(newPosition, newPosition);
     });
   });
+}
+
+function deleteLine(
+  vimState: VimState,
+  editor: vscode.TextEditor,
+  direction: Direction = Direction.Down
+): void {
+  deleteLines(vimState, editor, 1, direction);
 }
 
 function yankLine(vimState: VimState, editor: vscode.TextEditor): void {
