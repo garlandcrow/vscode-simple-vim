@@ -16,6 +16,7 @@ import { setVisualLineSelections } from "../visual_line_utils";
 import { flashYankHighlight } from "../yank_highlight";
 import { putAfter } from "../put_utils/put_after";
 import { putBefore } from "../put_utils/put_before";
+import { yank } from "./operators";
 import KeyMap from "./keymap";
 
 enum Direction {
@@ -34,7 +35,7 @@ export const actions: Action[] = [
   }),
 
   parseKeysExact(["g", "p"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("editor.action.peekDefinition");
+    vscode.commands.executeCommand("editor.action.PEEKDEFINITION");
   }),
 
   parseKeysExact(["g", "s"], [Mode.Normal], (vimState, editor) => {
@@ -49,7 +50,7 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("editor.action.transformToUppercase");
   }),
 
-  parseKeysExact(["g", "L"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact(["g", "u"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("editor.action.transformToLowercase");
   }),
 
@@ -58,7 +59,6 @@ export const actions: Action[] = [
     [KeyMap.Actions.InsertMode],
     [Mode.Normal, Mode.Visual, Mode.VisualLine],
     (vimState, editor) => {
-      console.log("fuck insertMode: " + KeyMap.Actions.InsertMode);
       enterInsertMode(vimState);
       setModeCursorStyle(vimState.mode, editor);
       removeTypeSubscription(vimState);
@@ -180,25 +180,120 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("deleteAllRight");
   }),
 
+  // add 1 character swap
   parseKeysRegex(
-    RegExp(`^d(\\d+)${KeyMap.Motions.MoveDown}$`),
-    /^(d|d\d+)$/,
+    /^X(.)$/,
+    /^X$/,
     [Mode.Normal, Mode.Visual],
     (vimState, editor, match) => {
-      let lineCount = parseInt(match[1]);
-      // console.log(`delete ${lineCount} lines down`);
-      deleteLines(vimState, editor, lineCount, Direction.Down);
+      editor.edit(builder => {
+        editor.selections.forEach(s => {
+          let oneChar = s.with({
+            end: s.active.with({
+              character: s.active.character + 1
+            })
+          });
+          builder.replace(oneChar, match[1]);
+        });
+      });
     }
   ),
 
+  // these allow you to the delete n lines above/below
+  // ex. d12i = delete 12 lines up
   parseKeysRegex(
-    RegExp(`^d(\\d+)${KeyMap.Motions.MoveUp}$`),
+    RegExp(`^d(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
     /^(d|d\d+)$/,
     [Mode.Normal, Mode.Visual],
     (vimState, editor, match) => {
       let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
+      // console.log(`delete ${lineCount} lines down`);
+      deleteLines(vimState, editor, lineCount, direction);
+    }
+  ),
+
+  // same for change command
+  parseKeysRegex(
+    RegExp(`^c(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
+    /^(c|c\d+)$/,
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor, match) => {
+      let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
+      // console.log(`delete ${lineCount} lines down`);
+      deleteLines(vimState, editor, lineCount, direction);
+
+      enterInsertMode(vimState);
+      setModeCursorStyle(vimState.mode, editor);
+      removeTypeSubscription(vimState);
+    }
+  ),
+
+  // same for selection command
+  parseKeysRegex(
+    RegExp(`^s(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
+    /^(s|s\d+)$/,
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor, match) => {
+      let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
       // console.log(`delete ${lineCount} lines up`);
-      deleteLines(vimState, editor, lineCount, Direction.Up);
+      editor.selections = makeMultiLineSelection(
+        vimState,
+        editor,
+        lineCount,
+        direction
+      );
+    }
+  ),
+
+  // same for yank command
+  parseKeysRegex(
+    RegExp(`^y(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
+    /^(y|y\d+)$/,
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor, match) => {
+      let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
+      // console.log(`delete ${lineCount} lines up`);
+      let selections = makeMultiLineSelection(
+        vimState,
+        editor,
+        lineCount,
+        direction
+      );
+
+      yank(vimState, editor, selections, true);
+
+      flashYankHighlight(editor, selections);
+    }
+  ),
+
+  // same for rip command
+  parseKeysRegex(
+    RegExp(`^r(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
+    /^(r|r\d+)$/,
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor, match) => {
+      let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
+      // console.log(`delete ${lineCount} lines up`);
+      let selections = makeMultiLineSelection(
+        vimState,
+        editor,
+        lineCount,
+        direction
+      );
+
+      yank(vimState, editor, selections, true);
+
+      deleteLines(vimState, editor, lineCount, direction);
     }
   ),
 
@@ -327,15 +422,46 @@ export const actions: Action[] = [
   })
 ];
 
+function makeMultiLineSelection(
+  vimState: VimState,
+  editor: vscode.TextEditor,
+  lineCount: number,
+  direction: Direction
+): vscode.Selection[] {
+  return editor.selections.map(selection => {
+    if (direction == Direction.Up) {
+      let endLine = selection.active.line - lineCount + 1;
+      const startPos = positionUtils.lineEnd(editor.document, selection.active);
+      const endPos =
+        endLine >= 0
+          ? new vscode.Position(endLine, 0)
+          : new vscode.Position(0, 0);
+      return new vscode.Selection(startPos, endPos);
+    } else {
+      const endLine = selection.active.line + lineCount - 1;
+      const startPos = new vscode.Position(selection.active.line, 0);
+      const endPos =
+        endLine < editor.document.lineCount
+          ? new vscode.Position(
+              endLine,
+              editor.document.lineAt(endLine).text.length
+            )
+          : positionUtils.lastChar(editor.document);
+
+      return new vscode.Selection(startPos, endPos);
+    }
+  });
+}
+
 function deleteLines(
   vimState: VimState,
   editor: vscode.TextEditor,
-  count: number,
+  lineCount: number,
   direction: Direction = Direction.Down
 ): void {
   let selections = editor.selections.map(selection => {
     if (direction == Direction.Up) {
-      let endLine = selection.active.line - count;
+      let endLine = selection.active.line - lineCount;
       if (endLine >= 0) {
         const startPos = positionUtils.lineEnd(
           editor.document,
@@ -356,7 +482,7 @@ function deleteLines(
         return new vscode.Selection(startPos, endPos);
       }
     } else {
-      let endLine = selection.active.line + count;
+      let endLine = selection.active.line + lineCount;
       if (endLine <= editor.document.lineCount - 1) {
         const startPos = new vscode.Position(selection.active.line, 0);
         const endPos = new vscode.Position(endLine, 0);

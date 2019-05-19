@@ -200,7 +200,7 @@ function delete_(
     });
 }
 
-function yank(
+export function yank(
   vimState: VimState,
   editor: vscode.TextEditor,
   ranges: (vscode.Range | undefined)[],
