@@ -17,7 +17,7 @@ import { flashYankHighlight } from "../yank_highlight";
 import { putAfter } from "../put_utils/put_after";
 import { putBefore } from "../put_utils/put_before";
 import { yank } from "./operators";
-import KeyMap from "./keymap";
+import KeyMap from "./keymaps";
 
 enum Direction {
   Up,

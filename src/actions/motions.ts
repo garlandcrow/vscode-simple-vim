@@ -16,7 +16,7 @@ import { searchForward, searchBackward } from "../search_utils";
 import { paragraphForward, paragraphBackward } from "../paragraph_utils";
 import { setVisualLineSelections } from "../visual_line_utils";
 import { setVisualSelections } from "../visual_utils";
-import KeyMap from "./keymap";
+import KeyMap from "./keymaps";
 
 export const motions: Action[] = [
   parseKeysExact(

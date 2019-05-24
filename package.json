@@ -2,7 +2,7 @@
   "name": "simple-vim",
   "displayName": "Simple Vim",
   "description": "Vim extension for VSCode",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "publisher": "garlandcrow",
   "repository": {
@@ -21,6 +21,11 @@
   "main": "./out/extension",
   "contributes": {
     "keybindings": [
+      {
+        "key": ":",
+        "command": "workbench.action.gotoLine",
+        "when": "editorTextFocus && !extension.simpleVim.insertMode"
+      },
       {
         "key": "q q",
         "command": "editor.action.copyLinesDownAction",
