@@ -35,7 +35,7 @@ export const actions: Action[] = [
   }),
 
   parseKeysExact(["g", "p"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("editor.action.PEEKDEFINITION");
+    vscode.commands.executeCommand("editor.action.peekDefinition");
   }),
 
   parseKeysExact(["g", "s"], [Mode.Normal], (vimState, editor) => {
