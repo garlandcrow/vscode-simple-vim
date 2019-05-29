@@ -396,12 +396,16 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("deleteRight");
   }),
 
-  parseKeysExact(["z", "t"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("revealLine", {
-      lineNumber: editor.selection.active.line,
-      at: "top"
-    });
-  }),
+  parseKeysExact(
+    ["z", KeyMap.Motions.MoveUp],
+    [Mode.Normal],
+    (vimState, editor) => {
+      vscode.commands.executeCommand("revealLine", {
+        lineNumber: editor.selection.active.line,
+        at: "top"
+      });
+    }
+  ),
 
   parseKeysExact(["z", "z"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("revealLine", {
@@ -410,12 +414,16 @@ export const actions: Action[] = [
     });
   }),
 
-  parseKeysExact(["z", "b"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("revealLine", {
-      lineNumber: editor.selection.active.line,
-      at: "bottom"
-    });
-  }),
+  parseKeysExact(
+    ["z", KeyMap.Motions.MoveDown],
+    [Mode.Normal],
+    (vimState, editor) => {
+      vscode.commands.executeCommand("revealLine", {
+        lineNumber: editor.selection.active.line,
+        at: "bottom"
+      });
+    }
+  ),
 
   parseKeysExact([";"], [Mode.Normal], (vimState, editor) => {
     vimState.semicolonAction(vimState, editor);
