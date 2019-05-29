@@ -182,8 +182,8 @@ export const actions: Action[] = [
 
   // add 1 character swap
   parseKeysRegex(
-    /^X(.)$/,
-    /^X$/,
+    /^x(.)$/,
+    /^x$/,
     [Mode.Normal, Mode.Visual],
     (vimState, editor, match) => {
       editor.edit(builder => {
@@ -388,7 +388,11 @@ export const actions: Action[] = [
     setModeCursorStyle(vimState.mode, editor);
   }),
 
-  parseKeysExact(["x"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact(["h"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("deleteLeft");
+  }),
+
+  parseKeysExact(["n"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("deleteRight");
   }),
 
