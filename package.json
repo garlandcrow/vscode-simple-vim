@@ -22,8 +22,13 @@
   "contributes": {
     "keybindings": [
       {
-        "key": ":",
-        "command": "workbench.action.gotoLine",
+        "key": "space a",
+        "command": "editor.action.selectHighlights",
+        "when": "editorTextFocus && !extension.simpleVim.insertMode"
+      },
+      {
+        "key": "space n",
+        "command": "editor.action.addSelectionToNextFindMatch",
         "when": "editorTextFocus && !extension.simpleVim.insertMode"
       },
       {
