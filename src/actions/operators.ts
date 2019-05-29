@@ -127,6 +127,32 @@ export const operators: Action[] = [
 
       setModeCursorStyle(vimState.mode, editor);
     }
+  ),
+  parseKeysOperator(
+    ["q"],
+    operatorRanges,
+    (vimState, editor, ranges, linewise) => {
+      if (
+        ranges.every(x => x === undefined) ||
+        vimState.mode === Mode.Visual ||
+        vimState.mode === Mode.VisualLine
+      ) {
+        return;
+      }
+
+      editor.selections = ranges.map((range, i) => {
+        if (range) {
+          const start = range.start;
+          const end = range.end;
+          return new vscode.Selection(start, end);
+        } else {
+          return editor.selections[i];
+        }
+      });
+
+      vscode.commands.executeCommand("editor.action.copyLinesUpAction");
+      // setModeCursorStyle(vimState.mode, editor);
+    }
   )
 ];
 

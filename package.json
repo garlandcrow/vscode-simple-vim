@@ -32,16 +32,6 @@
         "when": "editorTextFocus && !extension.simpleVim.insertMode"
       },
       {
-        "key": "q q",
-        "command": "editor.action.copyLinesDownAction",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "shift+q shift+q",
-        "command": "editor.action.copyLinesUpAction",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
         "key": "shift+5",
         "command": "editor.action.jumpToBracket",
         "when": "editorTextFocus && !extension.simpleVim.insertMode"

@@ -176,7 +176,6 @@ export const actions: Action[] = [
   }),
 
   parseKeysExact(["D"], [Mode.Normal], (vimState, editor) => {
-    console.log("shit");
     vscode.commands.executeCommand("deleteAllRight");
   }),
 
@@ -352,6 +351,14 @@ export const actions: Action[] = [
       );
     });
     flashYankHighlight(editor, highlightRanges);
+  }),
+
+  parseKeysExact(["q", "q"], [Mode.Normal], () => {
+    vscode.commands.executeCommand("editor.action.copyLinesUpAction");
+  }),
+
+  parseKeysExact(["Q", "Q"], [Mode.Normal], () => {
+    vscode.commands.executeCommand("editor.action.copyLinesDownAction");
   }),
 
   parseKeysExact(["r", "r"], [Mode.Normal], (vimState, editor) => {
