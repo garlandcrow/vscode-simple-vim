@@ -22,16 +22,6 @@
   "contributes": {
     "keybindings": [
       {
-        "key": "space a",
-        "command": "editor.action.selectHighlights",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "space n",
-        "command": "editor.action.addSelectionToNextFindMatch",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
         "key": "shift+5",
         "command": "editor.action.jumpToBracket",
         "when": "editorTextFocus && !extension.simpleVim.insertMode"
@@ -45,21 +35,6 @@
         "key": "Escape",
         "command": "extension.simpleVim.escapeKey",
         "when": "editorTextFocus"
-      },
-      {
-        "key": "ctrl+r",
-        "command": "redo",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "ctrl+d",
-        "command": "extension.simpleVim.scrollDownHalfPage",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
-      },
-      {
-        "key": "ctrl+u",
-        "command": "extension.simpleVim.scrollUpHalfPage",
-        "when": "editorTextFocus && !extension.simpleVim.insertMode"
       },
       {
         "key": "ctrl+f",
