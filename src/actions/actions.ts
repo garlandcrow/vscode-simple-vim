@@ -7,6 +7,7 @@ import {
   enterInsertMode,
   enterVisualMode,
   enterVisualLineMode,
+  enterOccurrenceMode,
   setModeCursorStyle
 } from "../modes";
 import * as positionUtils from "../position_utils";
@@ -25,7 +26,63 @@ enum Direction {
 }
 
 export const actions: Action[] = [
-  // new actions
+  parseKeysExact([":"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("workbench.action.gotoLine");
+  }),
+
+  parseKeysExact(["m"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("bookmarks.toggle");
+  }),
+
+  // new space actions
+  parseKeysExact([" ", " "], [Mode.Normal], (vimState, editor) => {
+    enterOccurrenceMode(vimState);
+    vscode.commands.executeCommand("editor.action.addSelectionToNextFindMatch");
+  }),
+
+  parseKeysExact(["p"], [Mode.Occurrence], (vimState, editor) => {
+    vscode.commands.executeCommand(
+      "editor.action.addSelectionToPreviousFindMatch"
+    );
+  }),
+
+  parseKeysExact(["n"], [Mode.Occurrence], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.addSelectionToNextFindMatch");
+  }),
+
+  parseKeysExact(["a"], [Mode.Occurrence], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.selectHighlights");
+  }),
+
+  parseKeysExact(["a"], [Mode.Occurrence], (vimState, editor) => {
+    enterInsertMode(vimState);
+  }),
+
+  parseKeysExact([" ", "z"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("undo");
+  }),
+
+  parseKeysExact([" ", "r"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("redo");
+  }),
+
+  parseKeysExact([" ", "i"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("extension.simpleVim.scrollUpHalfPage");
+  }),
+
+  parseKeysExact([" ", "k"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("extension.simpleVim.scrollDownHalfPage");
+  }),
+
+  // new G actions
+  parseKeysExact(["g", "R"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("references-view.find");
+  }),
+
+  parseKeysExact(["g", "r"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.referenceSearch.trigger");
+  }),
+
   parseKeysExact(["g", "D"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("editor.action.revealDefinition");
   }),
@@ -54,10 +111,14 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("editor.action.transformToLowercase");
   }),
 
+  parseKeysExact(["g", "U"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("editor.action.transformToUppercase");
+  }),
+
   // existing
   parseKeysExact(
     [KeyMap.Actions.InsertMode],
-    [Mode.Normal, Mode.Visual, Mode.VisualLine],
+    [Mode.Normal, Mode.Visual, Mode.VisualLine, Mode.Occurrence],
     (vimState, editor) => {
       enterInsertMode(vimState);
       setModeCursorStyle(vimState.mode, editor);

@@ -23,12 +23,18 @@ export function enterVisualLineMode(vimState: VimState): void {
   setModeContext("extension.simpleVim.visualLineMode");
 }
 
+export function enterOccurrenceMode(vimState: VimState): void {
+  vimState.mode = Mode.Occurrence;
+  setModeContext("extension.simpleVim.occurrenceMode");
+}
+
 function setModeContext(key: string) {
   const modeKeys = [
     "extension.simpleVim.insertMode",
     "extension.simpleVim.normalMode",
     "extension.simpleVim.visualMode",
-    "extension.simpleVim.visualLineMode"
+    "extension.simpleVim.visualLineMode",
+    "extension.simpleVim.occurrenceMode"
   ];
 
   modeKeys.forEach(modeKey => {
@@ -40,11 +46,11 @@ export function setModeCursorStyle(
   mode: Mode,
   editor: vscode.TextEditor
 ): void {
-  if (mode === Mode.Insert) {
+  if (mode === Mode.Insert || mode === Mode.Occurrence) {
     editor.options.cursorStyle = vscode.TextEditorCursorStyle.Line;
   } else if (mode === Mode.Normal) {
     editor.options.cursorStyle = vscode.TextEditorCursorStyle.Block;
   } else if (mode === Mode.Visual || mode === Mode.VisualLine) {
-    editor.options.cursorStyle = vscode.TextEditorCursorStyle.LineThin;
+    editor.options.cursorStyle = vscode.TextEditorCursorStyle.Block;
   }
 }

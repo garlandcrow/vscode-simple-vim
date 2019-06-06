@@ -2,5 +2,6 @@ export enum Mode {
   Insert,
   Normal,
   Visual,
-  VisualLine
+  VisualLine,
+  Occurrence
 }
