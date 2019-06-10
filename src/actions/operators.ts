@@ -150,8 +150,7 @@ export const operators: Action[] = [
         }
       });
 
-      vscode.commands.executeCommand("editor.action.copyLinesUpAction");
-      // setModeCursorStyle(vimState.mode, editor);
+      vscode.commands.executeCommand("editor.action.copyLinesDownAction");
     }
   )
 ];

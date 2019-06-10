@@ -30,7 +30,23 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("workbench.action.gotoLine");
   }),
 
-  parseKeysExact(["m"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact(["m", "l"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("bookmarks.list");
+  }),
+
+  parseKeysExact(["m", "L"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("bookmarks.listFromAllFiles");
+  }),
+
+  parseKeysExact(["m", "i"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("bookmarks.jumpToPrevious");
+  }),
+
+  parseKeysExact(["m", "k"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand("bookmarks.jumpToNext");
+  }),
+
+  parseKeysExact(["m", "m"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("bookmarks.toggle");
   }),
 
@@ -54,10 +70,6 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("editor.action.selectHighlights");
   }),
 
-  parseKeysExact(["a"], [Mode.Occurrence], (vimState, editor) => {
-    enterInsertMode(vimState);
-  }),
-
   parseKeysExact([" ", "z"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("undo");
   }),
@@ -75,6 +87,12 @@ export const actions: Action[] = [
   }),
 
   // new G actions
+  parseKeysExact(["g", "l"], [Mode.Normal], (vimState, editor) => {
+    vscode.commands.executeCommand(
+      "workbench.action.navigateToLastEditLocation"
+    );
+  }),
+
   parseKeysExact(["g", "R"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("references-view.find");
   }),
@@ -83,11 +101,11 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("editor.action.referenceSearch.trigger");
   }),
 
-  parseKeysExact(["g", "D"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact(["g", "d"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("editor.action.revealDefinition");
   }),
 
-  parseKeysExact(["g", "d"], [Mode.Normal], (vimState, editor) => {
+  parseKeysExact(["g", "D"], [Mode.Normal], (vimState, editor) => {
     vscode.commands.executeCommand("editor.action.revealDefinitionAside");
   }),
 
@@ -357,6 +375,26 @@ export const actions: Action[] = [
     }
   ),
 
+  // same for duplicate command
+  parseKeysRegex(
+    RegExp(`^q(\\d+)(${KeyMap.Motions.MoveUp}|${KeyMap.Motions.MoveDown})$`),
+    /^(q|q\d+)$/,
+    [Mode.Normal, Mode.Visual],
+    (vimState, editor, match) => {
+      let lineCount = parseInt(match[1]);
+      let direction =
+        match[2] == KeyMap.Motions.MoveUp ? Direction.Up : Direction.Down;
+      // console.log(`delete ${lineCount} lines up`);
+      editor.selections = makeMultiLineSelection(
+        vimState,
+        editor,
+        lineCount,
+        direction
+      );
+      vscode.commands.executeCommand("editor.action.copyLinesDownAction");
+    }
+  ),
+
   parseKeysExact(["c", "c"], [Mode.Normal], (vimState, editor) => {
     editor.edit(editBuilder => {
       editor.selections.forEach(selection => {
@@ -414,12 +452,12 @@ export const actions: Action[] = [
     flashYankHighlight(editor, highlightRanges);
   }),
 
-  parseKeysExact(["q", "q"], [Mode.Normal], () => {
-    vscode.commands.executeCommand("editor.action.copyLinesUpAction");
+  parseKeysExact(["q", "q"], [Mode.Normal, Mode.Visual], () => {
+    vscode.commands.executeCommand("editor.action.copyLinesDownAction");
   }),
 
-  parseKeysExact(["Q", "Q"], [Mode.Normal], () => {
-    vscode.commands.executeCommand("editor.action.copyLinesDownAction");
+  parseKeysExact(["Q", "Q"], [Mode.Normal, Mode.Visual], () => {
+    vscode.commands.executeCommand("editor.action.copyLinesUpAction");
   }),
 
   parseKeysExact(["r", "r"], [Mode.Normal], (vimState, editor) => {
