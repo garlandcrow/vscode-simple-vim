@@ -129,10 +129,6 @@ export const actions: Action[] = [
     vscode.commands.executeCommand("editor.action.transformToLowercase");
   }),
 
-  parseKeysExact(["g", "U"], [Mode.Normal], (vimState, editor) => {
-    vscode.commands.executeCommand("editor.action.transformToUppercase");
-  }),
-
   // existing
   parseKeysExact(
     [KeyMap.Actions.InsertMode],
