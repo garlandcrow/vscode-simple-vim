@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 
 import {
   createOperatorRangeExactKeys,
-  createOperatorRangeRegex
+  createOperatorRangeRegex,
 } from "../parse_keys";
 import { OperatorRange } from "../parse_keys_types";
 import {
   searchForward,
   searchBackward,
   searchBackwardBracket,
-  searchForwardBracket
+  searchForwardBracket,
 } from "../search_utils";
 import * as positionUtils from "../position_utils";
 import { wordRanges, whitespaceWordRanges } from "../word_utils";
@@ -17,11 +17,12 @@ import {
   paragraphForward,
   paragraphBackward,
   paragraphRangeOuter,
-  paragraphRangeInner
+  paragraphRangeInner,
 } from "../paragraph_utils";
 import { VimState } from "../vim_state_types";
 import { quoteRanges, findQuoteRange } from "../quote_utils";
 import { indentLevelRange } from "../indent_utils";
+import { blockRange } from "../block_utils";
 import { getTags } from "../tag_utils";
 import { arrayFindLast } from "../array_utils";
 // import KeyMap from "./keymap";
@@ -348,7 +349,7 @@ export const operatorRanges: OperatorRange[] = [
     (vimState, document, position) => {
       const tags = getTags(document);
 
-      const closestTag = arrayFindLast(tags, tag => {
+      const closestTag = arrayFindLast(tags, (tag) => {
         if (tag.closing) {
           return (
             position.isAfterOrEqual(tag.opening.start) &&
@@ -364,7 +365,7 @@ export const operatorRanges: OperatorRange[] = [
         if (closestTag.closing) {
           return new vscode.Range(
             closestTag.opening.end.with({
-              character: closestTag.opening.end.character + 1
+              character: closestTag.opening.end.character + 1,
             }),
             closestTag.closing.start
           );
@@ -385,7 +386,7 @@ export const operatorRanges: OperatorRange[] = [
     (vimState, document, position) => {
       const tags = getTags(document);
 
-      const closestTag = arrayFindLast(tags, tag => {
+      const closestTag = arrayFindLast(tags, (tag) => {
         const afterStart = position.isAfterOrEqual(tag.opening.start);
 
         if (tag.closing) {
@@ -400,14 +401,14 @@ export const operatorRanges: OperatorRange[] = [
           return new vscode.Range(
             closestTag.opening.start,
             closestTag.closing.end.with({
-              character: closestTag.closing.end.character + 1
+              character: closestTag.closing.end.character + 1,
             })
           );
         } else {
           return new vscode.Range(
             closestTag.opening.start,
             closestTag.opening.end.with({
-              character: closestTag.opening.end.character + 1
+              character: closestTag.opening.end.character + 1,
             })
           );
         }
@@ -432,7 +433,17 @@ export const operatorRanges: OperatorRange[] = [
         )
       );
     }
-  )
+  ),
+
+  createOperatorRangeExactKeys(
+    ["a", "b"],
+    true,
+    (vimState, document, position) => {
+      const range = blockRange(document, position);
+
+      return range;
+    }
+  ),
 ];
 
 function createInnerBracketHandler(
@@ -454,7 +465,7 @@ function createInnerBracketHandler(
     if (bracketRange) {
       return new vscode.Range(
         bracketRange.start.with({
-          character: bracketRange.start.character + 1
+          character: bracketRange.start.character + 1,
         }),
         bracketRange.end
       );
@@ -587,7 +598,7 @@ function createWordForwardHandler(
     const lineText = document.lineAt(position.line).text;
     const ranges = wordRangesFunction(lineText);
 
-    const result = ranges.find(x => x.start > position.character);
+    const result = ranges.find((x) => x.start > position.character);
 
     if (result) {
       return new vscode.Range(
@@ -614,7 +625,7 @@ function createWordBackwardHandler(
     const lineText = document.lineAt(position.line).text;
     const ranges = wordRangesFunction(lineText);
 
-    const result = ranges.reverse().find(x => x.start < position.character);
+    const result = ranges.reverse().find((x) => x.start < position.character);
 
     if (result) {
       return new vscode.Range(
@@ -638,7 +649,7 @@ function createWordEndHandler(
     const lineText = document.lineAt(position.line).text;
     const ranges = wordRangesFunction(lineText);
 
-    const result = ranges.find(x => x.end > position.character);
+    const result = ranges.find((x) => x.end > position.character);
 
     if (result) {
       return new vscode.Range(
@@ -663,7 +674,7 @@ function createInnerWordHandler(
     const ranges = wordRangesFunction(lineText);
 
     const result = ranges.find(
-      x => x.start <= position.character && position.character <= x.end
+      (x) => x.start <= position.character && position.character <= x.end
     );
 
     if (result) {

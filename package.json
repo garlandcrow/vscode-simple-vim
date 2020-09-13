@@ -67,9 +67,11 @@
     "lint": "tslint -c tslint.json 'src/**/*.ts' --exclude 'src/test/*.ts'"
   },
   "devDependencies": {
-    "@types/node": "^10.5.1",
+    "@types/http-errors": "^1.8.0",
+    "@types/node": "^12.12.58",
+    "string.prototype.matchall": "^4.0.2",
     "tslint": "^5.10.0",
-    "typescript": "^2.9.2",
+    "typescript": "^4.0.2",
     "vscode": "^1.1.18"
   }
 }
